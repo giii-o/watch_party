@@ -1,0 +1,14 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Environment files (API keys live here later)
+.env
+.env.local
+
+# Editor and OS files
+.vscode
+.idea
+.DS_Store

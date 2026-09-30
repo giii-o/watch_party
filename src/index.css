@@ -1,0 +1,743 @@
+/* ============================================================
+   Watch Party styles — stark minimalist edition
+   Per docs/ui&ux.md (stark-minimalist-ui-engine):
+   - 0px corners on structural boxes; buttons carry MINIMAL curvature
+     (4px) and always read as clean wide rectangles (section 5)
+   - no borders: separation via flat, low-contrast fills
+   - text-first hierarchy: Inter light headlines, centered
+     landing/auth focus
+   - 150ms snappy transitions; solid dark focus lines (no glow)
+   - tiny desaturated footer/legal tier
+   - semantic HTML, strict vertical stack spacing (kept from
+     the previous engine: 44px touch targets, aria alerts)
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+
+:root {
+  /* color: pristine light theme */
+  --color-bg: #ffffff;
+  --color-surface: #f9f9f9; /* the "rgba(0,0,0,0.03)" fill from the doc */
+  --color-fill: #eeeeee; /* inputs: one step deeper than surface */
+  --color-text: #111111;
+  --color-text-muted: #6b6b6b;
+  --color-text-faint: #a3a3a3;
+  --color-on-accent: #ffffff;
+  --color-danger: #c94f4f;
+  --color-danger-fill: #fdf1f1;
+  --color-scrim: rgba(17, 17, 17, 0.95);
+
+  /* shape: sharp structural boxes; buttons get MINIMAL curvature
+     (ui&ux.md section 5), never pills */
+  --radius-button: 4px;
+
+  /* the doc's one transition, used everywhere */
+  --transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
+
+  /* typography
+     - display/body: Inter (geometric sans); SF Pro on Apple devices
+     - headings use LIGHT-to-regular weights per the type spec
+     - micro labels: uppercase + wide tracking (kerning) */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+    'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  --tracking-label: 0.12em;
+}
+
+/* ---------- Base ---------- */
+
+body {
+  font-family: var(--font-sans);
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+  line-height: 1.5;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* primary headings: large grotesque sans at a MID-THICK weight —
+   ui&ux.md section 5: "The headers should have a mid-thick font weight" */
+h1 {
+  font-family: var(--font-sans);
+  font-size: clamp(2.25rem, 1.8rem + 2.2vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+}
+
+h2 {
+  font-family: var(--font-sans);
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5rem;
+}
+
+/* micro label: uppercase, small, widely tracked — pure hierarchy signal */
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  color: var(--color-text-faint);
+  margin: 0 0 0.5rem;
+}
+
+/* live eyebrow: green — a running party is announced in color */
+.eyebrow--live {
+  color: #2f9e44;
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--color-text-muted);
+}
+
+/* solid dark focus line — the doc's replacement for glow rings */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+/* ---------- Shared: buttons, inputs, cards ---------- */
+
+.button {
+  box-sizing: border-box;
+  height: 32px; /* ui&ux.md section 5: max height of any button is 32px */
+  min-width: 6rem; /* always a clear wide rectangle, never near-square */
+  border: none;
+  border-radius: var(--radius-button); /* minimum curvature only */
+  padding: 0 1.5rem; /* generous sides ≈ the 3:1 label-to-button feel */
+  font-size: 0.875rem; /* scaled to the 32px box, keeps the 3:1 ratio */
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* primary action: slightly wider still, same minimal curvature */
+.button--primary {
+  min-width: 10rem;
+  padding: 0 2.5rem;
+  background: var(--color-text);
+  color: var(--color-on-accent);
+}
+
+.button--primary:hover:not(:disabled) {
+  background: #333333;
+}
+
+.button--danger {
+  background: var(--color-danger-fill);
+  color: var(--color-danger);
+}
+
+.button--danger:hover:not(:disabled) {
+  background: #fbe3e3;
+}
+
+.button--small {
+  min-width: 6rem;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  background: var(--color-fill);
+  color: var(--color-text);
+}
+
+.input {
+  box-sizing: border-box;
+  height: 32px; /* same height as an adjacent button (ui&ux.md section 5) */
+  background: var(--color-fill); /* flat fill boundary, zero border lines */
+  border: none;
+  border-radius: 0;
+  color: var(--color-text);
+  padding: 0 0.75rem;
+  font-size: inherit;
+  transition: var(--transition);
+}
+
+.input::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* container: flat fill, sharp corners, no border */
+.card {
+  background: var(--color-surface);
+  border-radius: 0;
+  padding: 2rem;
+}
+
+.card__title {
+  margin: 0 0 0.5rem;
+}
+
+.card__text {
+  margin: 0 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ---------- Home page (centered text-first landing) ---------- */
+
+.home {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 1rem 2rem;
+  text-align: center; /* the elegant anchor point */
+}
+
+.home__hero p {
+  margin: 0 0 3rem;
+  color: var(--color-text-muted);
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+}
+
+.home__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  text-align: left; /* forms read better left-aligned inside cards */
+}
+
+@media (max-width: 700px) {
+  .home__cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.join-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.join-form .input {
+  flex: 1;
+  text-transform: uppercase;
+}
+
+/* the host's running-party card: the code sits beside the Join button
+   (no input box), and Close room spans ~90% of the card below them.
+   Card dimensions stay exactly as the normal join card. */
+.join-form__code {
+  flex: 1;
+  align-self: center;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+.join-form__close {
+  display: block;
+  width: 90%;
+  margin: 0.5rem auto 0;
+}
+
+.home__error {
+  margin: 0 0 1rem;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
+
+/* lowest tier: tiny, desaturated */
+.home__legal {
+  margin: 4rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-faint);
+}
+
+/* ---------- User menu ---------- */
+
+.user-menu {
+  margin: 0 auto 2.5rem;
+  max-width: 640px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.user-menu strong {
+  color: var(--color-text);
+}
+
+.user-menu a {
+  display: inline-block;
+  padding: 0.5rem 0;
+}
+
+/* ---------- Auth pages (centered acquisition card) ---------- */
+
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+/* back button: pinned to the corner so the centered card stays untouched */
+.auth-layout__back {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+}
+
+.auth-layout__brand {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  color: var(--color-text);
+  padding: 0.5rem 1rem;
+}
+
+.auth-layout__card {
+  width: 100%;
+  max-width: 380px;
+  text-align: center; /* centered form = the elegant anchor */
+}
+
+.auth-layout__title {
+  font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  font-weight: 400;
+  margin: 0 0 1.5rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column; /* strict vertical stack */
+  gap: 1rem;
+  text-align: left; /* field labels left, actions centered below */
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field__label {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.auth-form .button--primary {
+  align-self: center;
+  margin-top: 0.5rem;
+}
+
+.auth-form__error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
+
+.auth-form__notice {
+  margin: 0 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.auth-form__success {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.875rem;
+}
+
+.auth-form__resend {
+  background: var(--color-surface);
+  border-radius: 0;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.auth-form__resend p {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* progressive functional link: plain underlined text under the action */
+.auth-form__switch {
+  margin: 1.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.auth-form__min-length {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-faint);
+}
+
+/* ---------- Room page ---------- */
+
+.room {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  position: relative;
+}
+
+.room__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.room__header-actions {
+  display: flex;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .room__header {
+    flex-direction: column;
+  }
+}
+
+.room__name {
+  font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  font-weight: 400;
+  margin: 0 0 0.25rem;
+}
+
+.room__code {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.room__code strong {
+  color: var(--color-text);
+}
+
+/* code line + copy button side by side */
+.room__code-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.room__code-row .room__code {
+  margin: 0;
+}
+
+/* the brief success flash after copying */
+.button--small.copy-button--copied {
+  background: var(--color-text);
+  color: var(--color-on-accent);
+}
+
+/* participants: sharp flat chips, no pill rounding */
+
+.participants__status {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  color: var(--color-text-faint);
+}
+
+.participants__list {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.participants__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-surface);
+  border-radius: 0;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.participants__badge {
+  background: var(--color-text);
+  color: var(--color-on-accent);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  border-radius: 0;
+  padding: 0.125rem 0.5rem;
+}
+
+.participants__empty {
+  margin: 0 0 1.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* video + side area */
+
+.room__grid--two {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .room__grid--two {
+    grid-template-columns: 1fr;
+  }
+}
+
+.room__video-area,
+.room__side-area {
+  background: var(--color-surface);
+  border-radius: 0; /* sharp structural box */
+  padding: 1rem;
+}
+
+.room__side-note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* the player */
+
+/* placeholder + error overlay lives INSIDE the always-mounted frame */
+.video-player__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-fill);
+  border-radius: 0;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* guest shield: invisible sheet above the iframe (z-index 2 beats the
+   iframe's 1). The browser hit-test hands EVERY pointer event — clicks,
+   mousemove, mouseenter — to this div, so YouTube's player inside the
+   iframe never sees the mouse: no hover controls, no pause-on-click.
+   cursor: default so the video area reads as a screen, not a button. */
+.video-player__blocker {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+  cursor: default;
+}
+
+/* join settle window: quiet "joining" cover while the player catches
+   up after the click; nothing on it is clickable */
+.video-player__joining {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-scrim);
+}
+
+.video-player__joining p {
+  margin: 0;
+  color: var(--color-on-accent);
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* guests see this instead of their browser's blocked autoplay: one
+   click tells YouTube this user wants sound, and everyone is synced */
+.video-player__join {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  background: var(--color-scrim);
+}
+
+.video-player__join .button {
+  min-width: 10rem;
+}
+
+.video-player__placeholder p {
+  margin: 0.25rem 0;
+}
+
+.video-player__placeholder p:first-child {
+  font-size: 1.375rem;
+  font-weight: 500; /* mid-thick, per the header rule */
+  letter-spacing: -0.02em;
+}
+
+.video-player__hint {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* 16:9 box, sharp corners, fixed size = no layout shift.
+   ALWAYS mounted so the async player never loses its mount point.
+   aspect-ratio (not the old padding-top trick) gives the box a REAL
+   computed height — otherwise the iframe's height:100% collapses to
+   ~0px and you get a black screen with a working player inside. */
+.video-player__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.video-player__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  z-index: 1;
+}
+
+/* host link input */
+
+.video-link-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.video-link-form .input {
+  flex: 1;
+}
+
+.video-link-form__error {
+  margin: 0.5rem 0 0;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  flex-basis: 100%;
+}
+
+/* room closed overlay: quiet dark interruption */
+
+.room__closed-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-scrim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  z-index: 10;
+}
+
+.room__closed-overlay h1 {
+  color: var(--color-on-accent);
+}
+
+.room__closed-overlay p {
+  color: var(--color-text-faint);
+}
+
+/* loading / not-found / error states */
+
+.room-status {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.room-status p {
+  color: var(--color-text-muted);
+}
+
+.room-status a {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+}
+
+/* ---------- Demo landing page (public, no login) ---------- */
+
+.demo-page {
+  min-height: 100vh;
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+/* the one big CTA: wide rectangle, oversized sides (the 3:1 feel) */
+.demo-page__cta {
+  height: 48px;
+  min-width: 18rem;
+  font-size: 1rem;
+}
+
+.demo-page__blurb {
+  margin: 0;
+  max-width: 26rem;
+  color: var(--color-text-muted);
+}
+
+.demo-page__form {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+}
+
+.demo-page__error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-danger);
+}
+
+/* demo form inputs keep the same height as every other input */
+.demo-page .input {
+  height: 40px;
+}
